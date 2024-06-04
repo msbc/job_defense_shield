@@ -12,6 +12,7 @@ from utils import send_email
 from utils import send_email_html
 from utils import add_dividers
 
+
 class ActiveCPUMemory(Alert):
 
     """Find actively running jobs that not using the CPU memory. Consider only
@@ -30,13 +31,16 @@ class ActiveCPUMemory(Alert):
         mem_with_safety = math.ceil(1.2 * mem_used)
         if mem_with_safety > 1000:
             mem_suggested = round(mem_with_safety, -2)
-            if mem_suggested - mem_with_safety < 0: mem_suggested += 100
+            if mem_suggested - mem_with_safety < 0:
+                mem_suggested += 100
         elif mem_with_safety > 100:
             mem_suggested = round(mem_with_safety, -1)
-            if mem_suggested - mem_with_safety < 0: mem_suggested += 10
+            if mem_suggested - mem_with_safety < 0:
+                mem_suggested += 10
         elif mem_with_safety > 30:
             mem_suggested = round(mem_with_safety, -1)
-            if mem_suggested - mem_with_safety < 0: mem_suggested += 5
+            if mem_suggested - mem_with_safety < 0:
+                mem_suggested += 5
         else:
             return max(1, mem_with_safety)
         return mem_suggested
@@ -82,18 +86,18 @@ class ActiveCPUMemory(Alert):
             return 0
         self.df["mem"] = self.df["alloctres"].apply(mem_from_alloctres)
         self.df = self.df[self.df["mem"] >= 50]
- 
+
         self.admin = pd.DataFrame()
         if not self.df.empty:
             self.df["jobstats"] = self.df.apply(lambda row:
-                                       self.get_stats_for_running_job(row["jobid"],
-                                                                      row["cluster"]),
-                                                                      axis='columns')
+                                                self.get_stats_for_running_job(row["jobid"],
+                                                                               row["cluster"]),
+                                                axis='columns')
             self.df["memory-tuple"] = self.df.apply(lambda row:
                                                     cpu_memory_usage(row["jobstats"],
                                                                      row["jobid"],
                                                                      row["cluster"]),
-                                                                     axis="columns")
+                                                    axis="columns")
             self.df["mem-used"]  = self.df["memory-tuple"].apply(lambda x: x[0])
             self.df["mem-alloc"] = self.df["memory-tuple"].apply(lambda x: x[1])
             # next line guards against division by zero when computing self.df.ratio
@@ -120,7 +124,7 @@ class ActiveCPUMemory(Alert):
                         "mem-alloc",
                         "cores",
                         "elapsed-hours",
-                        "Limit-Hours"] 
+                        "Limit-Hours"]
                 renamings = {"jobid":"JobID",
                              "mem-used":"Memory-Used",
                              "mem-alloc":"Memory-Allocated",
@@ -129,8 +133,8 @@ class ActiveCPUMemory(Alert):
                 usr = usr[cols].rename(columns=renamings)
                 s =  f"{get_first_name(user)},\n\n"
                 s += "Below are jobs currently running on Della (cpu):\n\n"
-                #usr_str = usr.to_string(index=False, justify="center")
-                #s +=  "\n".join([4 * " " + row for row in usr_str.split("\n")])
+                # usr_str = usr.to_string(index=False, justify="center")
+                # s +=  "\n".join([4 * " " + row for row in usr_str.split("\n")])
                 s += usr.to_html(index=False, border=1, justify="center").replace('<td>', '<td align="center">')
                 s += "\n"
                 s += textwrap.dedent(f"""
@@ -138,7 +142,7 @@ class ActiveCPUMemory(Alert):
                 "Memory-Used" is much less than "Memory-Allocated". Ideally, "Memory-Used"
                 should be about 80% of "Memory-Allocated".
 
-                For instance, for {usr['JobID'].values[0]} use a Slurm directive such as --mem-per-cpu={self.rounded_memory_with_safety(mem_used/cores)}G
+                For instance, for {usr['JobID'].values[0]} use a Slurm directive such as --mem-per-cpu={self.rounded_memory_with_safety(mem_used / cores)}G
                 or --mem={self.rounded_memory_with_safety(mem_used)}G.
 
                 For more on allocating CPU memory with Slurm:
@@ -158,12 +162,12 @@ class ActiveCPUMemory(Alert):
                 Consider attending an in-person Research Computing help session for assistance:
 
                     https://researchcomputing.princeton.edu/support/help-sessions
-       
+
                 Replying to this automated email will open a support ticket with Research
                 Computing. Let us know if we can be of help.
                 """)
 
-                #send_email(s,   f"{user}@princeton.edu", subject=f"{self.subject}", sender="cses@princeton.edu")
+                # send_email(s,   f"{user}@princeton.edu", subject=f"{self.subject}", sender="cses@princeton.edu")
                 send_email(s, "halverson@princeton.edu", subject=f"{self.subject}", sender="cses@princeton.edu")
                 s = '<p align="left">Hi Alan:</p>' + \
                     '<p align="left">Below is a table showing underutilization on the clusters:</p>' + \
@@ -182,7 +186,7 @@ class ActiveCPUMemory(Alert):
                 print(s)
 
                 # append the new violations to the log file
-                #Alert.update_violation_log(usr, vfile)
+                # Alert.update_violation_log(usr, vfile)
 
     def generate_report_for_admins(self, title: str, keep_index: bool=False) -> str:
         """Drop and rename some of the columns."""

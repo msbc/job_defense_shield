@@ -6,6 +6,7 @@ from utils import HOURS_PER_DAY
 from abc import abstractmethod
 import pandas as pd
 
+
 class Alert:
 
     """Base class for all alerts."""

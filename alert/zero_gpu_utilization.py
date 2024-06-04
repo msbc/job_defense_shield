@@ -87,9 +87,7 @@ class ZeroGpuUtilization(Alert):
                           (self.jb.NetID == user)].copy()
             if not usr.empty:
                 s = f"{get_first_name(user)},\n\n"
-                text = (
-                'You have GPU job(s) that have been running for more than 1 hour but appear to not be using the GPU(s):'
-                )
+                text = ('You have GPU job(s) that have been running for more than 1 hour but appear to not be using the GPU(s):')
                 s += "\n".join(textwrap.wrap(text, width=80))
                 s += "\n\n"
 
@@ -108,9 +106,7 @@ class ZeroGpuUtilization(Alert):
                 """)
 
                 s += "\n"
-                text = (
-                f'Please consider cancelling the job(s) listed above by using the "scancel" command:'
-                )
+                text = (f'Please consider cancelling the job(s) listed above by using the "scancel" command:')
                 s += "\n".join(textwrap.wrap(text, width=80))
                 s += "\n\n"
                 s += f"     $ scancel {usr.JobID.values[0]}"
@@ -152,9 +148,7 @@ class ZeroGpuUtilization(Alert):
             print(usr)
             if not usr.empty and (emails_sent >= self.min_previous_warnings):
                 s = f"{get_first_name(user)},\n\n"
-                text = (
-                'This is a second warning. The jobs below will be cancelled in about 15 minutes unless GPU activity is detected:'
-                )
+                text = ('This is a second warning. The jobs below will be cancelled in about 15 minutes unless GPU activity is detected:')
                 s += "\n".join(textwrap.wrap(text, width=80))
                 s += "\n\n"
 
@@ -181,12 +175,10 @@ class ZeroGpuUtilization(Alert):
             print(usr)
             if not usr.empty and (emails_sent >= self.min_previous_warnings):
                 s = f"{get_first_name(user)},\n\n"
-                text = (
-                'The jobs below have been cancelled because they ran for at least 2 hours at 0% GPU utilization:'
-                )
+                text = ('The jobs below have been cancelled because they ran for at least 2 hours at 0% GPU utilization:')
                 s += "\n".join(textwrap.wrap(text, width=80))
                 s += "\n\n"
- 
+
                 usr["GPU-Util"] = "0%"
                 usr["State"] = "CANCELLED"
                 usr["Hours"] = usr.elapsedraw.apply(lambda x: round(x / SECONDS_PER_HOUR, 1))
@@ -205,10 +197,13 @@ class ZeroGpuUtilization(Alert):
                 Replying to this automated email will open a support ticket with Research
                 Computing. Let us know if we can be of help.
                 """)
-                
+
                 send_email(s, f"{user}@princeton.edu", subject=f"{self.subject}", sender="cses@princeton.edu")
-                for email in admin_self.emails: 
-                    send_email(s, f"{email}", subject=f"{self.subject}", sender="cses@princeton.edu")
+                try:
+                    for email in admin_self.emails:
+                        send_email(s, f"{email}", subject=f"{self.subject}", sender="cses@princeton.edu")
+                except (NameError, AttributeError):  # catche errors from "admin_self.emails"
+                    pass
                 print(s)
 
                 for jobid in usr.JobID.tolist():

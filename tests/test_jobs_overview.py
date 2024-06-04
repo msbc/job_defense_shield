@@ -2,6 +2,7 @@ import pytest
 import pandas as pd
 from alert.jobs_overview import JobsOverview
 
+
 def test_jobs_overview():
     n_jobs = 6
     num_cores = 16

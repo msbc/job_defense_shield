@@ -29,13 +29,12 @@ class UtilizationBySlurmAccount(Alert):
             for p in self.gp["partition"].unique():
                 for field in ["cpu-hours", "gpu-hours"]:
                     total = self.gp[(self.gp["cluster"] == cluster) &
-                               (self.gp["partition"] == p)][field].sum()
+                                    (self.gp["partition"] == p)][field].sum()
                     if total != 0:
-                        self.gp[field] = self.gp.apply(lambda row:
-                                         f"{row[field]} ({round(100 * row[field] / total)}%)"
-                                         if row["cluster"] == cluster and
-                                            row["partition"] == p
-                                         else row[field], axis="columns")
+                        self.gp[field] = self.gp.apply(
+                            lambda row: f"{row[field]} ({round(100 * row[field] / total)}%)"
+                            if row["cluster"] == cluster and row["partition"] == p
+                            else row[field], axis="columns")
 
         # dataframe 2 of 2 where the values for each user are explicit
         d = {"cpu-hours":"sum",

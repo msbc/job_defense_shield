@@ -2,11 +2,13 @@ import pytest
 import pandas as pd
 from alert.excessive_time_limits import ExcessiveTimeLimits
 
+
 @pytest.fixture(autouse=True)
 def setUp():
     print()
     print("setUp")
     print("tearDown")
+
 
 def test_excessive_time_limits():
     n_jobs = 6
@@ -23,7 +25,7 @@ def test_excessive_time_limits():
     limits = ExcessiveTimeLimits(df, 0, "", "", "Subject", cluster="della", partition="cpu")
     actual = limits.gp[["NetID", "CPU-Hours-Unused", "median(%)", "rank", "jobs"]]
     expected = pd.DataFrame({"NetID":["user1", "user2"],
-                             "CPU-Hours-Unused":[95e3+90e3+85e3, 81e3+81e3],
+                             "CPU-Hours-Unused":[95e3 + 90e3 + 85e3, 81e3 + 81e3],
                              "median(%)":[10, 19],
                              "rank":[3, 2],
                              "jobs":[3, 2]})

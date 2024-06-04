@@ -33,7 +33,7 @@ class SerialCodeUsingMultipleCores(Alert):
                                                               single=True,
                                                               precision=1),
                                                               axis="columns")
-        self.df["error-code"] = self.df["cpu-eff-tpl"].apply(lambda tpl: tpl[1]) 
+        self.df["error-code"] = self.df["cpu-eff-tpl"].apply(lambda tpl: tpl[1])
         # drop jobs with non-zero error codes
         self.df = self.df[self.df["error-code"] == 0]
         self.df["cpu-eff"] = self.df["cpu-eff-tpl"].apply(lambda tpl: tpl[0])
@@ -72,7 +72,7 @@ class SerialCodeUsingMultipleCores(Alert):
                 usr = self.df[self.df.NetID == user].copy()
                 cpu_hours_wasted = usr["CPU-Hours-Wasted"].sum()
                 usr = usr.drop(columns=["NetID", "cores-minus-1", "CPU-Hours-Wasted"])
-                prev_emails = self.get_emails_sent_count(user, self.violation, days=90)
+                # prev_emails = self.get_emails_sent_count(user, self.violation, days=90)
                 num_disp = 15
                 total_jobs = usr.shape[0]
                 case = f"{num_disp} of your {total_jobs} jobs" if total_jobs > num_disp else "your jobs"
@@ -86,7 +86,7 @@ class SerialCodeUsingMultipleCores(Alert):
                     usr_str = usr.head(num_disp).to_string(index=False, justify="center").split("\n")
                     s +=  "\n".join([4 * " " + row for row in usr_str])
                     s +=  "\n"
-                    s += textwrap.dedent(f"""
+                    s += textwrap.dedent("""
                     The CPU utilization (CPU-Util) of each job above is approximately equal to
                     100% divided by the number of allocated CPU-cores (100%/CPU-cores). This
                     suggests that you may be running a code that can only use 1 CPU-core. If this is
@@ -101,7 +101,7 @@ class SerialCodeUsingMultipleCores(Alert):
                     s += textwrap.dedent(f"""
                     Please consult the documentation of the software to see if it is parallelized.
                     For a general overview of parallel computing:
-        
+
                         https://researchcomputing.princeton.edu/support/knowledge-base/parallel-code
 
                     If the code cannot run in parallel then please use the following Slurm
@@ -134,7 +134,7 @@ class SerialCodeUsingMultipleCores(Alert):
 
                     # append the new violations to the log file
                     Alert.update_violation_log(usr, vfile)
-   
+
     def generate_report_for_admins(self, title: str, keep_index: bool=False) -> str:
         if self.df.empty:
             return ""
@@ -149,10 +149,9 @@ class SerialCodeUsingMultipleCores(Alert):
             self.gp["CPU-cores"] = self.gp["CPU-cores"].apply(lambda x: round(x, 1))
             self.gp = self.gp.rename(columns={"CPU-cores":"AvgCores"})
             self.gp.reset_index(drop=False, inplace=True)
-            self.gp["email90"] = self.gp.NetID.apply(lambda netid:
-                                               self.get_emails_sent_count(netid,
-                                                                          self.violation,
-                                                                          days=90))
+            self.gp["email90"] = self.gp.NetID.apply(
+                lambda netid: self.get_emails_sent_count(netid, self.violation, days=90)
+            )
             self.gp = self.gp[["NetID", "CPU-Hours-Wasted", "AvgCores", "Jobs", "email90"]]
             self.gp = self.gp.sort_values(by="CPU-Hours-Wasted", ascending=False)
             self.gp.reset_index(drop=True, inplace=True)

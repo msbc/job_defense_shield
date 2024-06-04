@@ -41,7 +41,7 @@ class UtilizationOverview(Alert):
         self.df = self.df[self.df["elapsedraw"] > 0].copy()
         self.by_cluster = compute_utilization(["cluster"])
         self.by_partition = compute_utilization(["cluster", "partition"], simple=False)
-        
+
         # add max usage for specific partitions (this code to be removed)
         period_hours = 24 * self.days_between_emails
         self.special = self.by_partition.copy()
@@ -59,7 +59,7 @@ class UtilizationOverview(Alert):
             mig = round(100 * mig / 56 / period_hours)
             self.special.at[("della", "mig"), "Usage(%)"] = mig
             # gpu usage on della cli
-            pli = self.special.at[("della", "pli"), "gpu-hours"] 
+            pli = self.special.at[("della", "pli"), "gpu-hours"]
             plic = self.special.at[("della", "pli-c"), "gpu-hours"]
             cli = int(pli.split("(")[0].strip()) + int(plic.split("(")[0].strip())
             cli = round(100 * cli / 296 / period_hours)

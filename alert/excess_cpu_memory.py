@@ -96,9 +96,9 @@ class ExcessCPUMemory(Alert):
             self.gp = self.gp.rename(columns=renamings)
             # should email90 be computed for a specific cluster and partition?
             self.gp["email90"] = self.gp["NetID"].apply(lambda netid:
-                                                 self.get_emails_sent_count(netid,
-                                                                            self.violation,
-                                                                            days=90))
+                                                        self.get_emails_sent_count(netid,
+                                                                                   self.violation,
+                                                                                   days=90))
             cols = ["mem-hrs-unused", "mem-hrs-used", "mem-hrs-alloc", "cpu-hrs"]
             self.gp[cols] = self.gp[cols].apply(round).astype("int64")
             cols = ["proportion", "ratio", "mean-ratio", "median-ratio"]

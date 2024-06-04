@@ -2,6 +2,7 @@ import pytest
 import pandas as pd
 from alert.serial_code_using_multiple_cores import SerialCodeUsingMultipleCores
 
+
 def test_serial_using_multiple_cores():
     n_jobs = 5
     wallclock_secs = 100000
@@ -10,44 +11,47 @@ def test_serial_using_multiple_cores():
     num_used_cores = 1
     num_cores = 32
     job1 = {
-    "gpus": 0,
-    "nodes": {
-        "della-r2c1n5": {
-            "cpus": num_cores,
-            "total_memory": 34359738368,
-            "total_time": num_used_cores * wallclock_secs,
-            "used_memory": 165367808
-        }
-    },
-    "total_time": -1}
+        "gpus": 0,
+        "nodes": {
+            "della-r2c1n5": {
+                "cpus": num_cores,
+                "total_memory": 34359738368,
+                "total_time": num_used_cores * wallclock_secs,
+                "used_memory": 165367808
+            }
+        },
+        "total_time": -1
+    }
     # job 2
     num_used_cores = 1
     num_cores = 16
     job2 = {
-    "gpus": 0,
-    "nodes": {
-        "della-r2c1n6": {
-            "cpus": num_cores,
-            "total_memory": 68719476736,
-            "total_time": num_used_cores * wallclock_secs,
-            "used_memory": 192299008
-        }
-    },
-    "total_time": -1}
+        "gpus": 0,
+        "nodes": {
+            "della-r2c1n6": {
+                "cpus": num_cores,
+                "total_memory": 68719476736,
+                "total_time": num_used_cores * wallclock_secs,
+                "used_memory": 192299008
+            }
+        },
+        "total_time": -1
+    }
     # job 3 has 50% utilization for 8 cores so should be ignored
     num_used_cores = 4
     num_cores = 8
     job3 = {
-    "gpus": 0,
-    "nodes": {
-        "della-r2c1n6": {
-            "cpus": num_cores,
-            "total_memory": 68719476736,
-            "total_time": num_used_cores * wallclock_secs,
-            "used_memory": 192299008
-        }
-    },
-    "total_time": -1}
+        "gpus": 0,
+        "nodes": {
+            "della-r2c1n6": {
+                "cpus": num_cores,
+                "total_memory": 68719476736,
+                "total_time": num_used_cores * wallclock_secs,
+                "used_memory": 192299008
+            }
+        },
+        "total_time": -1
+    }
     df = pd.DataFrame({"jobid":["1234567"] * n_jobs,
                        "netid":["user1", "user1", "user2", "user1", "user2"],
                        "admincomment":[job1, job2, job3, job2, job1],

@@ -77,7 +77,8 @@ class LowEfficiency(Alert):
         self.ce = self.ce.head(self.num_top_users)
         self.ce["eff(%)"] = 100.0 * self.ce[f"{self.xpu}-seconds-used"] / self.ce[f"{self.xpu}-seconds-total"]
         # next line prevents (unlikely) failure when creating "{self.xpu}-hours"
-        if self.ce.empty: return pd.DataFrame()
+        if self.ce.empty:
+            return pd.DataFrame()
         self.ce[f"{self.xpu}-hours"] = self.ce.apply(lambda row:
                                                      round(row[f"{self.xpu}-seconds-total"] / SECONDS_PER_HOUR),
                                                      axis="columns")
@@ -134,11 +135,11 @@ class LowEfficiency(Alert):
                              "cores":"AvgCores"}
                 usr = usr[cols].rename(columns=renamings)
                 myrank = f"the {rank}th most" if rank > 3 else rank_text[rank]
-                partitions = usr['Partition(s)'].values[0]
+                # partitions = usr['Partition(s)'].values[0]
                 edays = self.days_between_emails
-                s = f"{get_first_name(user)},\n\n"
-                s +=f"Over the last {edays} days you have used {myrank} {self.xpu.upper()}-hours on {self.cluster_name} but\n"
-                s +=f"your mean {self.xpu.upper()} efficiency is only {usr['Efficiency'].values[0]}:\n\n"
+                s  = f"{get_first_name(user)},\n\n"
+                s += f"Over the last {edays} days you have used {myrank} {self.xpu.upper()}-hours on {self.cluster_name} but\n"
+                s += f"your mean {self.xpu.upper()} efficiency is only {usr['Efficiency'].values[0]}:\n\n"
                 usr_str = usr.drop(columns=["Cluster"]).to_string(index=False, justify="center")
                 s += "\n".join([5 * " " + row for row in usr_str.split("\n")])
                 s += "\n"

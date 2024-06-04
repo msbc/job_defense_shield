@@ -24,6 +24,7 @@ class ZeroCPU(Alert):
         if not self.df.empty:
             self.df["nodes-unused"] = self.df.admincomment.apply(cpu_nodes_with_zero_util)
             self.df = self.df[self.df["nodes-unused"] > 0]
+
             def is_interactive(jobname):
                 if jobname.startswith("sys/dashboard") or jobname.startswith("interactive"):
                     return True
@@ -63,7 +64,7 @@ class ZeroCPU(Alert):
                 if num_jobs == 1 and all_single:
                     continue
                 s =  f"{get_first_name(user)},\n\n"
-                s += f"Below are your recent jobs that did not use all of the allocated nodes:\n\n"
+                s += "Below are your recent jobs that did not use all of the allocated nodes:\n\n"
                 usr_str = usr.to_string(index=False, justify="center")
                 s +=  "\n".join([4 * " " + row for row in usr_str.split("\n")])
                 s += "\n"
@@ -124,5 +125,5 @@ class ZeroCPU(Alert):
         if self.df.empty:
             return ""
         else:
-            self.df = self.df.sort_values(["NetID", "JobID"]) 
+            self.df = self.df.sort_values(["NetID", "JobID"])
             return add_dividers(self.df.to_string(index=keep_index, justify="center"), title)

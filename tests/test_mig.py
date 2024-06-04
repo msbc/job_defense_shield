@@ -1,12 +1,14 @@
 import pytest
 import pandas as pd
-from alert.mig import MultiInstanceGPU 
+from alert.mig import MultiInstanceGPU
+
 
 @pytest.fixture(autouse=True)
 def setUp():
     print()
     print("setUp")
     print("tearDown")
+
 
 def test_mig():
     n_jobs = 5

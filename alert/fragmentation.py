@@ -124,11 +124,10 @@ class MultinodeCPUFragmentation(Alert):
 
     def send_emails_to_users(self):
         for user in self.df.NetID.unique():
-
-
-            if user == "martirez": continue  # EXCLUDED USER--HANDLE VIA CONFIG FILE
-            if user == "mcreamer": continue  # EXCLUDED USER--HANDLE VIA CONFIG FILE
-
+            if user == "martirez":
+                continue  # EXCLUDED USER--HANDLE VIA CONFIG FILE
+            if user == "mcreamer":
+                continue  # EXCLUDED USER--HANDLE VIA CONFIG FILE
 
             vfile = f"{self.vpath}/{self.violation}/{user}.email.csv"
             if self.has_sufficient_time_passed_since_last_email(vfile):
@@ -160,7 +159,7 @@ class MultinodeCPUFragmentation(Alert):
                 usr_str = usr.to_string(index=False, justify="center")
                 s += "\n".join([4 * " " + row for row in usr_str.split("\n")])
                 s += "\n"
-                s += textwrap.dedent(f"""
+                s += textwrap.dedent("""
                 The "Nodes" column shows the number of nodes used to run the job. The
                 "Nodes-Needed" column shows the minimum number of nodes needed to run the
                 job (these values are calculated based on the number of requested CPU-cores
@@ -178,12 +177,12 @@ class MultinodeCPUFragmentation(Alert):
                             cores_per_node = max_cores
                         s += textwrap.dedent(f"""
                         Della (cpu) is composed of nodes with 32 CPU-cores and 190 GB of CPU memory. If
-                        your job requires {cores_per_node*min_nodes} CPU-cores (and you do not have high memory demands) then
+                        your job requires {cores_per_node * min_nodes} CPU-cores (and you do not have high memory demands) then
                         use, for example:
 
                             #SBATCH --nodes={min_nodes}
                             #SBATCH --ntasks-per-node={cores_per_node}
-                            #SBATCH --ntasks={cores_per_node*min_nodes}
+                            #SBATCH --ntasks={cores_per_node * min_nodes}
 
                         For more information about the compute nodes on Della:
 
@@ -192,12 +191,12 @@ class MultinodeCPUFragmentation(Alert):
                     elif all_physics:
                         s += textwrap.dedent(f"""
                         Della (physics) is composed of nodes with 40 CPU-cores and 380 GB of CPU memory.
-                        If your job requires {40*min_nodes} CPU-cores (and you do not have high memory demands)
+                        If your job requires {40 * min_nodes} CPU-cores (and you do not have high memory demands)
                         then use, for example:
 
                             #SBATCH --nodes={min_nodes}
                             #SBATCH --ntasks-per-node=40
-                            #SBATCH --ntasks={40*min_nodes}
+                            #SBATCH --ntasks={40 * min_nodes}
 
                         For more information about the compute nodes on Della:
 
@@ -207,12 +206,12 @@ class MultinodeCPUFragmentation(Alert):
                         s += textwrap.dedent(f"""
                         Della (physics) is composed of nodes with 40 CPU-cores and 380 GB of CPU memory.
                         while Della (cpu) is composed of nodes with 32 CPU-cores and 190 GB of CPU
-                        memory. If your job requires {40*min_nodes} CPU-cores (and you do not have high memory
+                        memory. If your job requires {40 * min_nodes} CPU-cores (and you do not have high memory
                         demands) then use, for example:
 
                             #SBATCH --nodes={min_nodes}
                             #SBATCH --ntasks-per-node=40
-                            #SBATCH --ntasks={40*min_nodes}
+                            #SBATCH --ntasks={40 * min_nodes}
 
                         For more information about the compute nodes on Della:
 
@@ -221,12 +220,12 @@ class MultinodeCPUFragmentation(Alert):
                 if is_tiger:
                     s += textwrap.dedent(f"""
                         Tiger is composed of nodes with 40 CPU-cores and either 192 or 768 GB of
-                        CPU memory. If your job requires {40*min_nodes} CPU-cores (and you do not have high memory
+                        CPU memory. If your job requires {40 * min_nodes} CPU-cores (and you do not have high memory
                         demands) then use, for example:
 
                             #SBATCH --nodes={min_nodes}
                             #SBATCH --ntasks-per-node=40
-                            #SBATCH --ntasks={40*min_nodes}
+                            #SBATCH --ntasks={40 * min_nodes}
 
                         For more information about the compute nodes on Tiger:
 
@@ -238,12 +237,12 @@ class MultinodeCPUFragmentation(Alert):
                         cores_per_node = max_cores
                     s += textwrap.dedent(f"""
                         Stellar (Intel) is composed of nodes with 96 CPU-cores and 768 GB of CPU memory.
-                        If your job requires {min_nodes*cores_per_node} CPU-cores (and you do not have high memory demands)
+                        If your job requires {min_nodes * cores_per_node} CPU-cores (and you do not have high memory demands)
                         then use, for example:
 
                             #SBATCH --nodes={min_nodes}
                             #SBATCH --ntasks-per-node={cores_per_node}
-                            #SBATCH --ntasks={min_nodes*cores_per_node}
+                            #SBATCH --ntasks={min_nodes * cores_per_node}
 
                         For more information about the compute nodes on Stellar:
 
@@ -273,7 +272,7 @@ class MultinodeCPUFragmentation(Alert):
                 Consider attending an in-person Research Computing help session for assistance:
 
                     https://researchcomputing.princeton.edu/support/help-sessions
- 
+
                 Replying to this automated email will open a support ticket with Research
                 Computing. Let us know if we can be of help.
                 """)
